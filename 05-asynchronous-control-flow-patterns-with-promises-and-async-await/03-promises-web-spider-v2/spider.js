@@ -23,16 +23,26 @@ function download (url, filename) {
 }
 
 function spiderLinks (currentUrl, content, nesting) {
-  let promise = Promise.resolve()
+  let promise = Promise.resolve() // manually building an empty promise
   if (nesting === 0) {
     return promise
   }
   const links = getPageLinks(currentUrl, content)
   for (const link of links) {
-    promise = promise.then(() => spider(link, nesting - 1))
+    promise = promise.then(() => spider(link, nesting - 1)) // updating the promise variable with a new Promise by invoking .then()
+    // ^^ this is the sequential iteration with promises
+    // builds a chain of promises using a loop
   }
 
-  return promise
+  // another alternative to doing the above
+  // const promise = links.reduce((prev, link) => {
+  // return prev.then(() => {
+  //      return link()
+  //    })
+  // })
+  // }, Promise.resolve())
+
+  return promise // this only contains the promise of the last .then() call but only gets here if all previous promises are good
 }
 
 export function spider (url, nesting) {
